@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DldAssistant.MainPage">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="25" Padding="30">
+            <!--
+            <Image x:Name="qrImg" WidthRequest="100" HeightRequest="100" Aspect="AspectFill" />
+            <Button x:Name="btnReLoadQR" Text="Reload Qrcode" Clicked="btnReLoadQR_Clicked"></Button>
+            -->
+            <HorizontalStackLayout>
+                <Label 
+                Text="Cookie: "
+                FontSize="15"
+                HorizontalOptions="Start" />
+
+                <Entry
+                x:Name="txtCookie"
+                FontSize="15"
+                MinimumWidthRequest="20"
+                />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout>
+                <Entry x:Name="txtNum" Placeholder="次数" TextChanged="txtNum_TextChanged" />
+                <Button 
+                Text="JHCM"
+                FontAttributes="Bold"
+                SemanticProperties.Hint="Counts the number of times you click"
+                Clicked="OnJHCMClicked"
+                HorizontalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <ScrollView MaximumHeightRequest="250" Grid.Row="3">
+                <Editor x:Name="edText"
+                        MinimumHeightRequest="150"
+                        IsReadOnly="True"/>
+            </ScrollView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+ 
+</ContentPage>
