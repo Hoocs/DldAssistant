@@ -91,6 +91,13 @@ namespace DldAssistant.Ultity
                 return meetings.OrderByDescending(d => d.text).First().org.url_goal;
             }
 
+            //解释身份
+            var other = rebuildParam.FindAll(d => d.text.Contains("解释身份"));
+            if (other.Any())
+            {
+                return other.OrderByDescending(d => d.text).First().org.url_goal;
+            }
+
             //剩下的暂时都选第一个吧
             return lstActParam[0].url_goal;
         }

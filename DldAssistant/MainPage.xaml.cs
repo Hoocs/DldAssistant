@@ -9,7 +9,7 @@ public partial class MainPage : ContentPage
     string cookie = "";
 
     int count = 0;
-    string jhdmUrl = "https://dld.qzapp.z.qq.com/qpet/cgi-bin/phonepk?zapp_uin=&sid=&channel=0&g_ut=1&cmd=jianghudream&op=beginInstance&ins_id=1";
+    readonly string jhdmUrl = "https://dld.qzapp.z.qq.com/qpet/cgi-bin/phonepk?zapp_uin=&sid=&channel=0&g_ut=1&cmd=jianghudream&op=beginInstance&ins_id=";
     HttpClient http = new HttpClient(new HttpClientHandler
     {
         AutomaticDecompression = System.Net.DecompressionMethods.All
@@ -50,22 +50,78 @@ public partial class MainPage : ContentPage
         //qzoneLogin.LoadQR(qrImg, AttachView);
     }
 
+    //循环执行
+    private async void OnRepeatUrlClicked(object sender, EventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(txtCookie.Text))
+        {
+            await DisplayAlert("", "请输入Cookie", "ok");
+            txtCookie.Focus();
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(txtRepeatUrl.Text.Trim()))
+        {
+            await DisplayAlert("", "请输入要循环的Url", "ok");
+            txtRepeatUrl.Focus();
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(txtNum.Text) || !int.TryParse(txtNum.Text, out int num) || num <= 0)
+        {
+            await DisplayAlert("", "循环次数格式错误", "ok");
+            txtNum.Focus();
+            return;
+        }
+
+        cookie = txtCookie.Text;
+        http.DefaultRequestHeaders.Remove("Cookie");
+        http.DefaultRequestHeaders.Add("Cookie", cookie);
+
+        AttachView("循环链接开始");
+        for (int i = 0; i < num; i++)
+        {
+            try
+            {
+                var beginJH = await http.GetStringAsync(txtRepeatUrl.Text.Trim());
+            }
+            catch (Exception ex)
+            {
+                AttachView($"第{i + 1}次失败：" + ex.Message);
+            }
+            AttachView($"第{i + 1}次已完成");
+        }
+
+        AttachView("循环链接结束");
+    }
+
     private async void OnJHCMClicked(object sender, EventArgs e)
     {
         if (string.IsNullOrWhiteSpace(txtCookie.Text))
         {
             await DisplayAlert("", "请输入Cookie", "ok");
+            txtCookie.Focus();
             return;
-        }     
+        }
+
+        if (string.IsNullOrWhiteSpace(txtJHCMId.Text) || !int.TryParse(txtJHCMId.Text, out int numId) || numId <= 0)
+        {
+            await DisplayAlert("", "长梦Id格式错误", "ok");
+            txtJHCMId.Focus();
+            return;
+        }
 
         if (string.IsNullOrWhiteSpace(txtNum.Text))
         {
             await DisplayAlert("", "请输入要循环的次数", "ok");
+            txtNum.Focus();
             return;
         }
+
         if (!int.TryParse(txtNum.Text, out int num))
         {
             await DisplayAlert("", "循环次数格式错误！", "ok");
+            txtNum.Focus();
             return;
         }
 
@@ -74,17 +130,18 @@ public partial class MainPage : ContentPage
         http.DefaultRequestHeaders.Add("Cookie", cookie);
 
         AttachView($"开始");
+        string opJhdmUrl = jhdmUrl + txtJHCMId.Text;
         for (int i = 0; i < num; i++)
         {
             try
             {
-                await DoOperater(jhdmUrl);
+                await DoOperater(opJhdmUrl);
             }
             catch (Exception ex)
             {
-                AttachView($"第{i + 1}次失败：" + ex.Message);
+                AttachView($"{txtJHCMId.Text}第{i + 1}次失败：" + ex.Message);
             }
-            AttachView($"第{i + 1}次已完成");
+            AttachView($"{txtJHCMId.Text}第{i + 1}次已完成");
             count++;
             //CounterLabel.Text = $"Current count: {count}";
 
