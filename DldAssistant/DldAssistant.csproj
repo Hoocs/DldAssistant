@@ -11,6 +11,9 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+
 		<!-- Display name -->
 		<ApplicationTitle>DldAssistant</ApplicationTitle>
 
@@ -28,7 +31,14 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
+  
+  <!-- To generate MSIX as part of dotnet publish-->
+  <PropertyGroup Condition="$(TargetFramework.Contains('-windows')) and '$(Configuration)' == 'Release'">
+    <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
+    <!-- <AppxPackageSigningEnabled>true</AppxPackageSigningEnabled> -->
+  </PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
