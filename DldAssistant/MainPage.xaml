@@ -4,11 +4,20 @@
              x:Class="DldAssistant.MainPage">
 
     <ScrollView>
-        <VerticalStackLayout Spacing="25" Padding="30">
+        <VerticalStackLayout Spacing="5" Padding="5">
+            <!--
+            <StackLayout>
+                <WebView x:Name="webView" HeightRequest="600" WidthRequest="600" IsVisible="true" Source="https://dld.qzapp.z.qq.com/qpet/cgi-bin/phonepk?cmd=index"></WebView>
+            </StackLayout>
+            -->
             <!--
             <Image x:Name="qrImg" WidthRequest="100" HeightRequest="100" Aspect="AspectFill" />
             <Button x:Name="btnReLoadQR" Text="Reload Qrcode" Clicked="btnReLoadQR_Clicked"></Button>
             -->
+            <HorizontalStackLayout>
+                <Button x:Name="btnSetCookie" Text="获取Cookie" Clicked="btnSetCookie_Clicked"></Button>
+                <Button x:Name="btnReUrl" Text="重登录" Clicked="btnReUrl_Clicked"></Button>
+            </HorizontalStackLayout>
             <HorizontalStackLayout>
                 <Label 
                 Text="Cookie: "
@@ -43,13 +52,14 @@
                 HorizontalOptions="Center" />
             </HorizontalStackLayout>
             
-            <ScrollView MaximumHeightRequest="250" Grid.Row="3">
+            <ScrollView Grid.Row="3">
                 <Editor x:Name="edText"
-                        MinimumHeightRequest="150"
+                        MinimumHeightRequest="250"
                         IsReadOnly="True"/>
             </ScrollView>
 
         </VerticalStackLayout>
+        
     </ScrollView>
- 
+
 </ContentPage>

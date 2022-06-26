@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace DldAssistant.Model
     /// <summary>
     /// 操作参数
     /// </summary>
+    [DebuggerDisplay("{text}, Url：{url_goal}")]
     internal class ActParam
     {
         /// <summary>

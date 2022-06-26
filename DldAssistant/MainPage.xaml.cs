@@ -6,9 +6,10 @@ namespace DldAssistant;
 
 public partial class MainPage : ContentPage
 {
+    public WebView webView;
+
     string cookie = "";
 
-    int count = 0;
     readonly string jhdmUrl = "https://dld.qzapp.z.qq.com/qpet/cgi-bin/phonepk?zapp_uin=&sid=&channel=0&g_ut=1&cmd=jianghudream&op=beginInstance&ins_id=";
     HttpClient http = new HttpClient(new HttpClientHandler
     {
@@ -25,6 +26,10 @@ public partial class MainPage : ContentPage
         //aqqrImg.HeightRequest = 100;
         //qrImg.WidthRequest = 100;
         //qrImg.Aspect = Aspect.AspectFit;
+    }
+    public void SetWebView(WebView webView)
+    {
+        this.webView = webView;
     }
 
     private async void qrImg_Loaded(object sender, EventArgs e)
@@ -53,10 +58,8 @@ public partial class MainPage : ContentPage
     //循环执行
     private async void OnRepeatUrlClicked(object sender, EventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(txtCookie.Text))
+        if (!await CheckInput())
         {
-            await DisplayAlert("", "请输入Cookie", "ok");
-            txtCookie.Focus();
             return;
         }
 
@@ -67,17 +70,11 @@ public partial class MainPage : ContentPage
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(txtNum.Text) || !int.TryParse(txtNum.Text, out int num) || num <= 0)
-        {
-            await DisplayAlert("", "循环次数格式错误", "ok");
-            txtNum.Focus();
-            return;
-        }
-
         cookie = txtCookie.Text;
         http.DefaultRequestHeaders.Remove("Cookie");
         http.DefaultRequestHeaders.Add("Cookie", cookie);
 
+        int.TryParse(txtNum.Text, out int num);
         AttachView("循环链接开始");
         for (int i = 0; i < num; i++)
         {
@@ -95,12 +92,29 @@ public partial class MainPage : ContentPage
         AttachView("循环链接结束");
     }
 
-    private async void OnJHCMClicked(object sender, EventArgs e)
+    private async ValueTask<bool> CheckInput()
     {
         if (string.IsNullOrWhiteSpace(txtCookie.Text))
         {
             await DisplayAlert("", "请输入Cookie", "ok");
             txtCookie.Focus();
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(txtNum.Text)
+            || !int.TryParse(txtNum.Text, out int num) || num <= 0)
+        {
+            await DisplayAlert("", "循环次数格式错误", "ok");
+            txtNum.Focus();
+            return false;
+        }
+        return true;
+    }
+
+    private async void OnJHCMClicked(object sender, EventArgs e)
+    {
+        if(!await CheckInput())
+        {
             return;
         }
 
@@ -111,19 +125,7 @@ public partial class MainPage : ContentPage
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(txtNum.Text))
-        {
-            await DisplayAlert("", "请输入要循环的次数", "ok");
-            txtNum.Focus();
-            return;
-        }
-
-        if (!int.TryParse(txtNum.Text, out int num))
-        {
-            await DisplayAlert("", "循环次数格式错误！", "ok");
-            txtNum.Focus();
-            return;
-        }
+        int.TryParse(txtNum.Text, out int num);
 
         cookie = txtCookie.Text;
         http.DefaultRequestHeaders.Remove("Cookie");
@@ -136,19 +138,17 @@ public partial class MainPage : ContentPage
             try
             {
                 await DoOperater(opJhdmUrl);
+                _ = http.GetStringAsync("https://dld.qzapp.z.qq.com/qpet/cgi-bin/phonepk?zapp_uin=&sid=&channel=0&g_ut=1&cmd=jianghudream&op=getFirstReward&ins_id" + txtJHCMId.Text);
             }
             catch (Exception ex)
             {
                 AttachView($"{txtJHCMId.Text}第{i + 1}次失败：" + ex.Message);
             }
             AttachView($"{txtJHCMId.Text}第{i + 1}次已完成");
-            count++;
-            //CounterLabel.Text = $"Current count: {count}";
-
-            //SemanticScreenReader.Announce(CounterLabel.Text);
         }
         AttachView($"结束");
     }
+
 
     private async Task DoOperater(string url)
     {
@@ -164,7 +164,8 @@ public partial class MainPage : ContentPage
         }
         if (result.Contains("很抱歉，系统繁忙，请稍后再试!"))
         {
-            await DoOperater(jhdmUrl);
+            AttachView("很抱歉，系统繁忙，请稍后再试! 自动重试中");
+            await DoOperater(url);
             return;
         }
 
@@ -186,7 +187,9 @@ public partial class MainPage : ContentPage
         List<ActParam> lstAct = AnalyseParam.AnalyseResponse(result);
 
         //战斗优先
-        var href = AnalyseParam.SelectHref(lstAct);
+        var actParam = AnalyseParam.SelectActParam(lstAct);
+        AttachView("选择了：" + actParam.text);
+        var href = actParam.url_goal;
         href = href.StartsWith("http") ? href : "https:" + href;
         await DoOperater(href);
     }
@@ -212,5 +215,26 @@ public partial class MainPage : ContentPage
         ((Entry)sender).Text = isValid ? e.NewTextValue : e.NewTextValue.Remove(e.NewTextValue.Length - 1);
     }
 
+    private async void btnSetCookie_Clicked(object sender, EventArgs e)
+    {
+        if(webView == null)
+        {
+            await DisplayAlert("", "未加载WebView！", "ok");
+            return;
+        }
+
+        txtCookie.Text = await webView.EvaluateJavaScriptAsync("document.cookie;");
+    }
+
+    private async void btnReUrl_Clicked(object sender, EventArgs e)
+    {
+        if (webView == null)
+        {
+            await DisplayAlert("", "未加载WebView！", "ok");
+            return;
+        }
+
+        webView.Source = "https://ui.ptlogin2.qq.com/cgi-bin/login?appid=614038002&style=9&s_url=https%3A%2F%2Fdld.qzapp.z.qq.com%2Fqpet%2Fcgi-bin%2Fphonepk%3Fcmd%3Dindex%26channel%3D0";
+    }
 }
 

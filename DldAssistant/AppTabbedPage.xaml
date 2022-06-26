@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:local="clr-namespace:DldAssistant;assembly=DldAssistant"
+            xmlns:android="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;assembly=Microsoft.Maui.Controls"
+            android:TabbedPage.ToolbarPlacement="Bottom"
+            x:Class="DldAssistant.AppTabbedPage"
+            Loaded="TabbedPage_Loaded">
+
+    <NavigationPage  x:Name="mainPage" Title="助手">
+        <x:Arguments>
+            <local:MainPage Title="助手" />
+        </x:Arguments>
+    </NavigationPage>
+    <NavigationPage  x:Name="webPage" Title="网页版">
+        <x:Arguments>
+            <local:WebPage Title="网页版" />
+        </x:Arguments>
+    </NavigationPage>
+
+</TabbedPage>

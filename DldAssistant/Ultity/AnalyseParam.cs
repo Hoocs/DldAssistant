@@ -51,11 +51,11 @@ namespace DldAssistant.Ultity
         /// 选择合适的操作
         /// </summary>
         /// <param name="lstActParam"></param>
-        public static string SelectHref(List<ActParam> lstActParam)
+        public static ActParam SelectActParam(List<ActParam> lstActParam)
         {
             if(lstActParam.Count == 1)
             {
-                return lstActParam[0].url_goal;
+                return lstActParam[0];
             }
 
             //战斗优先 --等级优先
@@ -67,39 +67,39 @@ namespace DldAssistant.Ultity
             var endOper = rebuildParam.FindAll(d => d.text.Contains("结束回忆"));
             if (endOper.Any())
             {
-                return endOper.OrderByDescending(d => d.text).First().org.url_goal;
+                return endOper.OrderByDescending(d => d.text).First().org;
             }
 
             //下一天优先
             var lastday = rebuildParam.FindAll(d => d.text.Contains("下一天"));
             if (lastday.Any())
             {
-                return lastday.OrderByDescending(d => d.text).First().org.url_goal;
+                return lastday.OrderByDescending(d => d.text).First().org;
             }
 
             //战斗优先
             var fights = rebuildParam.FindAll(d => d.text.Contains("战斗"));
             if(fights.Any())
             {
-                return fights.OrderByDescending(d => d.text).First().org.url_goal;
+                return fights.OrderByDescending(d => d.text).First().org;
             }
 
             //奇遇其次
             var meetings = rebuildParam.FindAll(d => d.text.Contains("奇遇"));
             if (meetings.Any())
             {
-                return meetings.OrderByDescending(d => d.text).First().org.url_goal;
+                return meetings.OrderByDescending(d => d.text).First().org;
             }
 
             //解释身份
-            var other = rebuildParam.FindAll(d => d.text.Contains("解释身份"));
+            var other = rebuildParam.FindAll(d => d.text.Contains("解释身份") || d.text.Contains("淋雨前行") || d.text.Contains("原地休息") || d.text.Contains("佯装离去") || d.text.Contains("盘问身份"));
             if (other.Any())
             {
-                return other.OrderByDescending(d => d.text).First().org.url_goal;
+                return other.OrderByDescending(d => d.text).First().org;
             }
 
             //剩下的暂时都选第一个吧
-            return lstActParam[0].url_goal;
+            return lstActParam[0];
         }
     }
 }
