@@ -156,7 +156,7 @@ namespace DldAssistant.Ultity
                         var ptcz = cookieContainer.GetAllCookies()["ptcz"].Value;
                         var uin = cookieContainer.GetAllCookies()["uin"].Value;
                         var skey = cookieContainer.GetAllCookies()["skey"].Value;
-                        string QQ = "834492623";
+                        string QQ = "";
                         var o_cookie = QQ;//cookieContainer.GetAllCookies()["o_cookie"]?.Value;
                         var pac_uid = $"1_{QQ}";//cookieContainer.GetAllCookies()["pac_uid"]?.Value;
                         var Cookie = $"iip=0;RK={RK};ptcz={ptcz};o_cookie={o_cookie};pac_uid={pac_uid};uin={uin};skey={skey};";

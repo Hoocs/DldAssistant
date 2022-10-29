@@ -40,7 +40,7 @@
                 SemanticProperties.Hint="Counts the number of times you click"
                 Clicked="OnJHCMClicked"
                 HorizontalOptions="Center" />
-                <Label Text="1为柒承，15时空，16红尘，17神雕，14全真，13中原，12老鹅，11天涯，7五绝" />
+                <Label Text="1为柒承，15时空，16红尘，17神雕，14全真，13中原，12老鹅，18天涯，7五绝" />
             </HorizontalStackLayout>
 
             <HorizontalStackLayout>
@@ -50,16 +50,18 @@
                 FontAttributes="Bold"
                 Clicked="OnRepeatUrlClicked"
                 HorizontalOptions="Center" />
+                <Button
+                    Text="Test"
+                    Clicked="Button_Clicked"/>
             </HorizontalStackLayout>
-            
-            <ScrollView Grid.Row="3">
-                <Editor x:Name="edText"
-                        MinimumHeightRequest="250"
-                        IsReadOnly="True"/>
-            </ScrollView>
+
+            <Editor x:Name="edText"
+                        IsReadOnly="True"
+                        AutoSize="TextChanges"
+                        Margin="5"/>
 
         </VerticalStackLayout>
-        
+
     </ScrollView>
 
 </ContentPage>

@@ -1,5 +1,6 @@
 ﻿using DldAssistant.Model;
 using DldAssistant.Ultity;
+using System.Web;
 using System.Xml;
 
 namespace DldAssistant;
@@ -26,7 +27,15 @@ public partial class MainPage : ContentPage
         //aqqrImg.HeightRequest = 100;
         //qrImg.WidthRequest = 100;
         //qrImg.Aspect = Aspect.AspectFit;
+
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
     }
+
+    private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        DisplayAlert("", e.ExceptionObject.ToString(), "ok");
+    }
+
     public void SetWebView(WebView webView)
     {
         this.webView = webView;
@@ -138,7 +147,7 @@ public partial class MainPage : ContentPage
             try
             {
                 await DoOperater(opJhdmUrl);
-                _ = http.GetStringAsync("https://dld.qzapp.z.qq.com/qpet/cgi-bin/phonepk?zapp_uin=&sid=&channel=0&g_ut=1&cmd=jianghudream&op=getFirstReward&ins_id" + txtJHCMId.Text);
+                _ = http.GetStringAsync("https://dld.qzapp.z.qq.com/qpet/cgi-bin/phonepk?zapp_uin=&sid=&channel=0&g_ut=1&cmd=jianghudream&op=getFirstReward&ins_id=" + txtJHCMId.Text);
             }
             catch (Exception ex)
             {
@@ -156,7 +165,7 @@ public partial class MainPage : ContentPage
         var beginJH = await http.GetStringAsync(url);
         var result = beginJH.Replace("&nbsp;", "");
 
-        if (!result.Contains("大乐斗"))
+        if (result.IndexOf("function setCookie", StringComparison.OrdinalIgnoreCase) != -1)
         {
             AttachView("登录失效");
             await DisplayAlert("", "登录失效", "ok");
@@ -202,7 +211,7 @@ public partial class MainPage : ContentPage
             iTextRow = 1;
             this.edText.Text = string.Empty;
         }
-        this.edText.Text = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}：{text}{Environment.NewLine}{this.edText.Text}";
+        this.edText.UpdateText($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}：{text}{Environment.NewLine}{this.edText.Text}");
     }
 
     private void txtNum_TextChanged(object sender, TextChangedEventArgs e)
@@ -235,6 +244,20 @@ public partial class MainPage : ContentPage
         }
 
         webView.Source = "https://ui.ptlogin2.qq.com/cgi-bin/login?appid=614038002&style=9&s_url=https%3A%2F%2Fdld.qzapp.z.qq.com%2Fqpet%2Fcgi-bin%2Fphonepk%3Fcmd%3Dindex%26channel%3D0";
+    }
+
+    private async void Button_Clicked(object sender, EventArgs e)
+    {
+        cookie = txtCookie.Text;
+        http.DefaultRequestHeaders.Remove("Cookie");
+        http.DefaultRequestHeaders.Add("Cookie", cookie);
+
+        string url = DldUrlInfo.dldBaseUrl + "?" + DldUrlInfo.totalinfo;
+        var beginJH = await http.GetStringAsync(url);
+        var result = beginJH.Replace("&nbsp;", "");
+        var aa = AnalyseParam.AnalyseFightResponse(result);
+        AttachView(aa.Item1);
+        AttachView(aa.Item2.ToString());
     }
 }
 
